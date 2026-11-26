@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="備料">
+<meta name="theme-color" content="#f4f2ee">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACKElEQVR42u3cwW2DQBRFURilCjeQAlhY2VGFW3BN7sYLS5EXFJBmrDQQRYoi4/lvzm0AMnP4gFA8306HSfqpZgkEh+AQHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIfgEBwSHIJDcAgO7dlb/p94feYFsD7gwOLXQ4QScVvRgDiuLfNYcAgOwSE4BIfgEByWQHAIDsEhOP7Rnh/DfHjTaEV/sl8fy+X+7INs52Pq+s2RP2+9g4kRlKTheAmLVCKNjLxzgKPfXYnx0cjgIxlHnzsR4KORwUcmjv5Xv7SPRobzHOJVVnDUuxyLDg+TQ3BoEBwVp3TFczY5BIfgEByCQ3AIDsEhOASH4JDgEByCQ3AIDsEhOASHYiv5yz7b+0fJxV5NDrmtCA7BIcEhOASH4BAcgkNwCA7BITgkOASH4BAcgkNwCA7BITgEhwSH4BAcgkNwCA7BITgEh+AQHBIc+kMlfzBu+fqseNrb+WhyyG1FcAgOCQ7BITgEh+AQHIJDcAgOwSHBITgEh+AQHIJDcAgOwSE4eq7cP4AUPWeTQ3BoHBy1pnTFe4rJoVAcVS7HomOj/OTof93ryki4rfS8+qVlhDxz9LkH1WXkPJD2thMBMqLeVvrZjwwZaa+yPexKjIxpmubb6ZD3gr5c7ljA8XoleSZGwSHPHIJDcAgOwSE4BIfgkOAQHIJDcAgOwSE4BIfgEByCQ4JDcAgOwSE4BIfgEByCQyP2DSyeXFAiKAw3AAAAAElFTkSuQmCC">
+<title>備料計算</title>
+<style>
+:root{--bg:#f4f2ee;--ink:#1d1d1b;--mute:#807b72;--line:#d8d3c8;--card:#fff;--key:#fff;--accent:#c4561a;--onacc:#fff;--ok:#1f8f4e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--ink:#f1efe9;--mute:#9a958b;--line:#3a3935;--card:#222220;--key:#2b2b28;--accent:#ff8a4c;--onacc:#1d1d1b;--ok:#4cd68a}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
+.app{height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;padding:8px 12px 12px;position:relative}
+.bar{display:flex;align-items:center;justify-content:space-between;height:40px}
+.brand{display:flex;align-items:center;gap:6px;color:var(--mute);font-size:15px;font-weight:600}
+.brand svg{width:13px;height:20px}
+.hb{border:0;background:transparent;color:var(--mute);font:600 15px -apple-system,"PingFang TC",sans-serif;padding:8px 6px}
+.out{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:0}
+.box{font-size:min(104px,20vw);font-weight:800;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.unit{font-size:22px;color:var(--mute);font-weight:500;margin-left:6px}
+.lw{height:64px;margin-top:14px;display:flex;align-items:center;justify-content:center}
+.loose{display:flex;align-items:baseline;gap:8px;font-size:22px;font-weight:700;color:var(--accent);background:var(--card);border:2.5px solid var(--accent);border-radius:18px;padding:6px 24px}
+.loose b{font-size:44px;line-height:1.1;font-variant-numeric:tabular-nums}
+.loose.ok{color:var(--ok);border-color:var(--ok);align-items:center;font-size:26px;padding:12px 28px}
+.hint{color:var(--mute);font-size:18px}
+.cr{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.cr .chips{flex:1;min-width:0}
+.ca{flex:0 0 auto;border:1.5px solid var(--accent);color:var(--accent);background:transparent;font:700 17px -apple-system,"PingFang TC",sans-serif;padding:8px 14px;border-radius:20px}
+.ca:active{background:var(--line)}
+.chips{display:flex;gap:8px;height:42px;align-items:center;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:700 20px -apple-system,"PingFang TC",sans-serif;padding:5px 14px;border-radius:20px}
+.chips button:active{background:var(--line)}
+.chips i{font-style:normal;color:var(--mute);font-size:13px}
+.fields{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-bottom:10px}
+.f{background:var(--card);border:2.5px solid var(--line);border-radius:14px;padding:8px 14px;text-align:left;font-family:inherit;color:var(--ink);display:block;width:100%}
+.f.on{border-color:var(--accent)}
+.f span{display:block;font-size:13px;color:var(--mute)}
+.f b{display:block;font-size:34px;line-height:1.2;height:41px;overflow:hidden;white-space:nowrap}
+.f.on b::after{content:"";display:inline-block;width:2px;height:28px;background:var(--accent);vertical-align:middle;margin-left:2px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.f.on b::after{animation:none}}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,60px);gap:8px}
+.pad button{border:0;border-radius:14px;background:var(--key);color:var(--ink);font:600 28px -apple-system,"PingFang TC",sans-serif;box-shadow:0 1px 0 var(--line);padding:0}
+.pad button:active{background:var(--line)}
+.pad .fn{font-size:18px;color:var(--mute)}
+.pad .go{background:var(--accent);color:var(--onacc);font-size:20px;grid-row:span 2}
+.sheet{position:absolute;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;z-index:5}
+.sheet.show{display:flex}
+.panel{background:var(--bg);width:100%;max-height:75%;border-radius:20px 20px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:700;font-size:18px}
+.ph button{border:0;background:transparent;color:var(--mute);font:600 15px -apple-system,"PingFang TC",sans-serif;padding:8px}
+.list{overflow:auto;-webkit-overflow-scrolling:touch}
+.it{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+.it .g{flex:1;border:0;background:transparent;color:var(--ink);text-align:left;padding:12px 4px;font-family:inherit}
+.it .g b{font-size:22px;color:var(--accent)}
+.it .g span{display:block;font-size:14px;color:var(--mute);margin-top:2px}
+.it .u{border:1.5px solid var(--accent);background:transparent;color:var(--accent);font:700 14px -apple-system,"PingFang TC",sans-serif;padding:6px 12px;border-radius:14px}
+.it .x{border:0;background:transparent;color:var(--mute);font-size:22px;padding:10px 14px}
+.empty{color:var(--mute);padding:24px 4px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar">
+    <div class="brand"><svg viewBox="0 0 13 20" aria-hidden="true"><rect x="4" y="0" width="5" height="3" rx="1" fill="#c4161c"/><path d="M4 3h5l1.5 3.5c.3.7.5 1.5.5 2.3V18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.8c0-.8.2-1.6.5-2.3z" fill="#f7efe3" stroke="#a89f90" stroke-width=".8"/><rect x="2" y="9" width="9" height="5" fill="#c4161c"/></svg>備料</div>
+    <button class="hb" id="hb">🕘 紀錄</button>
+  </div>
+  <div class="out" id="out" aria-live="polite"></div>
+  <div class="cr"><div class="chips" id="chips"></div><button class="ca" id="ca">全清</button></div>
+  <div class="fields">
+    <button class="f" id="fp"><span>每箱 PCS</span><b id="vp"></b></button>
+    <button class="f" id="ft"><span>備料總數 PCS</span><b id="vt"></b></button>
+  </div>
+  <div class="pad" id="pad">
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button class="fn" data-k="bs" aria-label="退格">⌫</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button class="go" data-k="sw">換格</button>
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+    <button class="fn" data-k="c">清此格</button><button data-k="0">0</button><button class="fn" data-k="00">00</button><button class="fn" data-k="cp" id="cp">複製</button>
+  </div>
+  <div class="sheet" id="sheet"><div class="panel" role="dialog" aria-label="歷史紀錄">
+    <div class="ph"><span>最近算過</span><span><button id="hclr">全部清除</button><button id="hcls">關閉</button></span></div>
+    <div class="list" id="list"></div>
+  </div></div>
+</div>
+<script>
+var KEY='prep-v4',st={mp:[],mt:[],h:[]},v={p:'',t:''},act='t',txt='',timer=null;
+try{var d=JSON.parse(localStorage.getItem(KEY));if(d){st.mp=d.mp||[];st.mt=d.mt||[];st.h=d.h||[]}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+v.p=st.mp[0]||'';if(!v.p)act='p';
+var out=document.getElementById('out');
+function res(p,t){return {f:Math.floor(t/p),l:t%p}}
+function show(){
+  document.getElementById('vp').textContent=v.p;
+  document.getElementById('vt').textContent=v.t;
+  document.getElementById('fp').className='f'+(act==='p'?' on':'');
+  document.getElementById('ft').className='f'+(act==='t'?' on':'');
+  var p=parseInt(v.p,10),t=parseInt(v.t,10);
+  chips();
+  clearTimeout(timer);
+  if(!p||isNaN(t)){out.innerHTML='<div class="hint">輸入數字</div>';txt='';return}
+  var r=res(p,t);
+  out.innerHTML='<div class="box">'+r.f+'<span class="unit">箱</span></div><div class="lw"><div class="loose'+(r.l?'':' ok')+'">'+(r.l?'零 <b>'+r.l+'</b>':'✓ 整箱')+'</div></div>';
+  txt=r.f+'箱'+(r.l?' 零'+r.l:'');
+  timer=setTimeout(record,1500);
+}
+function bump(a,x){var i=a.indexOf(x);if(i>-1)a.splice(i,1);a.unshift(x);if(a.length>8)a.length=8}
+function record(){
+  var p=parseInt(v.p,10),t=parseInt(v.t,10);
+  if(!p||!t)return;
+  bump(st.mp,String(p));bump(st.mt,String(t));
+  var h0=st.h[0];if(!(h0&&h0.p===p&&h0.t===t)){st.h=st.h.filter(function(e){return !(e.p===p&&e.t===t)});st.h.unshift({p:p,t:t,ts:Date.now()});if(st.h.length>30)st.h.length=30}
+  save();chips();
+}
+function chips(){
+  var a=(act==='p'?st.mp:st.mt).slice(0,6),h='';
+  a.forEach(function(x){h+='<button data-chip="'+x+'">'+x+'</button>'});
+  document.getElementById('chips').innerHTML=h||'<i>用過的數字會出現在這裡，點一下就填入</i>';
+}
+function press(k){
+  if(k==='sw'){act=act==='p'?'t':'p'}
+  else if(k==='bs'){v[act]=v[act].slice(0,-1)}
+  else if(k==='c'){v[act]=''}
+  else if(k==='cp'){copy();return}
+  else if(v[act].length<6){
+    if(k==='00'&&!v[act])return;
+    v[act]=(v[act]==='0'?'':v[act])+k;
+  }
+  show();
+}
+function copy(){
+  var b=document.getElementById('cp');if(!txt)return;
+  record();
+  function ok(){b.textContent='已複製';setTimeout(function(){b.textContent='複製'},1100)}
+  function fb(){var a=document.createElement('textarea');a.value=txt;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}a.remove()}
+  try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(e){fb()}
+}
+function tm(ts){if(!ts)return '';var d=new Date(ts),n=new Date(),z=function(x){return (x<10?'0':'')+x},hm=z(d.getHours())+':'+z(d.getMinutes());return d.toDateString()===n.toDateString()?'今天 '+hm:(d.getMonth()+1)+'/'+d.getDate()+' '+hm}
+function openH(){
+  record();
+  var h='';
+  st.h.forEach(function(e,i){var r=res(e.p,e.t);
+    h+='<div class="it"><button class="g" data-use="'+i+'"><b>'+r.f+' 箱'+(r.l?' 零 '+r.l:'')+'</b><span>'+e.t+' ÷ 每箱 '+e.p+' · '+tm(e.ts)+'</span></button><button class="u" data-use="'+i+'">帶入</button><button class="x" data-del="'+i+'" aria-label="刪除">×</button></div>'});
+  document.getElementById('list').innerHTML=h||'<div class="empty">還沒有紀錄，算過的會自動留在這裡</div>';
+  document.getElementById('sheet').className='sheet show';
+}
+function closeH(){document.getElementById('sheet').className='sheet'}
+document.getElementById('pad').addEventListener('click',function(e){var k=e.target.dataset.k;if(k)press(k)});
+document.getElementById('chips').addEventListener('click',function(e){var c=e.target.dataset.chip;if(c){v[act]=c;show()}});
+document.getElementById('fp').onclick=function(){act='p';show()};
+document.getElementById('ft').onclick=function(){act='t';show()};
+document.getElementById('hb').onclick=openH;
+document.getElementById('ca').onclick=function(){record();v.p='';v.t='';act='p';show()};
+document.getElementById('hcls').onclick=closeH;
+document.getElementById('hclr').onclick=function(){st.h=[];save();openH()};
+document.getElementById('sheet').addEventListener('click',function(e){
+  if(e.target.id==='sheet'){closeH();return}
+  var u=e.target.closest('[data-use]'),x=e.target.closest('[data-del]');
+  if(u){var e2=st.h[+u.dataset.use];v.p=String(e2.p);v.t=String(e2.t);act='t';closeH();show()}
+  else if(x){st.h.splice(+x.dataset.del,1);save();openH()}
+});
+document.addEventListener('visibilitychange',function(){if(document.hidden)record()});
+show();
+</script>
+</body>
+</html>
